@@ -85,7 +85,7 @@ class Cubemap: Texture
 
         width = resolution;
         height = resolution;
-        
+
         glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
 
         glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA16F, resolution, resolution, 0, GL_RGBA, GL_FLOAT, null);
@@ -108,14 +108,14 @@ class Cubemap: Texture
 
         width = img.width;
         height = img.height;
-        
+
         TextureFormat tf;
         if (detectTextureFormat(img, tf))
         {
             format = tf.format;
             intFormat = tf.internalFormat;
             type = tf.pixelType;
-            
+
             glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
             if (tf.compressed)
             {
@@ -133,7 +133,7 @@ class Cubemap: Texture
             writefln("Unsupported pixel format %s", img.pixelFormat);
         }
     }
-    
+
     void fromEquirectangularMap(Texture tex)
     {
         fromEquirectangularMap(tex.image);
@@ -163,17 +163,17 @@ class Cubemap: Texture
 
         faceImage.free();
     }
-    
+
     void fromContainerImage(ContainerImage img)
     {
         initialize();
-        
+
         if (!img.isCubemap)
         {
             writefln("Image is not a cubemap");
             return;
         }
-        
+
         TextureFormat tf;
         if (!detectTextureFormat(img, tf))
         {
@@ -185,24 +185,24 @@ class Cubemap: Texture
             writefln("Unsupported pixel format %s for a cubemap", img.pixelFormat);
             return;
         }
-        
+
         width = img.width;
         height = img.height;
         numMipmapLevels = img.mipLevels;
-        
+
         format = tf.format;
         intFormat = tf.internalFormat;
         type = tf.pixelType;
-        
+
         uint pSize = pixelSize(img.pixelFormat);
-        
+
         glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, numMipmapLevels - 1);
-        
+
         ubyte* data = img.data.ptr;
         uint offset = 0;
-        
+
         foreach(face; EnumMembers!CubeFace)
         {
             uint w = width;
@@ -221,10 +221,10 @@ class Cubemap: Texture
                 }
             }
         }
-        
+
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     }
-    
+
     void fromImage(SuperImage img, uint resolution = 512)
     {
         ContainerImage cImage = cast(ContainerImage)img;
